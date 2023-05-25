@@ -46,7 +46,9 @@ class menu:
 
 def create_menus(
         input_file:str='data_csv/recipes.csv', 
-        output_file:str='data_binary/menu.pkl'
+        menu_output_file:str='data_binary/menu.pkl',
+        ingd_output_file:str='data_binary/ingd.pkl',
+        write_file:bool=True
         ):
 
     global cnt_menu
@@ -58,6 +60,7 @@ def create_menus(
     menus = np.empty(cnt_menu, dtype=menu)
     normal_info = ['name', 'view', 'people', 'cooktime', 'condition', 'url', 'recipe']
     menu_idx, b_ingd, b_weight, tmp_dict = 0, 0, 0, {}
+    ingd_dict, ingd_list = {}, []
     with open(input_file, 'r', encoding='utf8') as menu_file:
         menu_reader = csv.reader(menu_file)
         for line in menu_reader:
@@ -77,13 +80,24 @@ def create_menus(
                 tmp_dict['ingredient'].update({cmd: value})
             elif b_weight:
                 tmp_dict['weight'].update({cmd: float(value)})
+                ingd_dict.update({cmd: float(value)})
             else:
                 print(f'There is an exceptional case: {menu_idx} {line}')
         
-        menu_pickle = open(output_file, 'wb')
-        pickle.dump(menus, menu_pickle, pickle.HIGHEST_PROTOCOL)
-        menu_pickle.close()
-    return menus
+        for k, v in ingd_dict.items():
+            ingd_list.append([k, v])
+        ingds = np.array(ingd_list)
+
+        if write_file:
+            ingd_pickle = open(ingd_output_file, 'wb')
+            pickle.dump(ingds, ingd_pickle, pickle.HIGHEST_PROTOCOL)
+            ingd_pickle.close()
+
+            menu_pickle = open(menu_output_file, 'wb')
+            pickle.dump(menus, menu_pickle, pickle.HIGHEST_PROTOCOL)
+            menu_pickle.close()
+
+    return (menus, ingds)
 
 
 def get_current_weights(menus:np.array, state:dict=user_status):
@@ -101,5 +115,5 @@ def get_current_weights(menus:np.array, state:dict=user_status):
 
 if __name__ == "__main__":
 
-    menus = create_menus()
+    menus, ingds = create_menus()
     weights = get_current_weights(menus)
