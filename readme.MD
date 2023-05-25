@@ -3,7 +3,7 @@
 ## Overview
 This project aims to recommend menus based on the ingredients available in the user's refrigerator. Instead of simply listing the ingredients, the focus is on providing high-quality recommendations that help users utilize their ingredients effectively.
 
-The recommendation system is built upon the refinement of approximately 1,500 recipes obtained from a website called 'Ten Thousand Recipes'. Each recipe is structured as follows:
+The recommendation system is built upon the refinement of approximately 1,500 recipes obtained from a website called '만개의 레시피'. Each recipe is structured as follows:
 
 1. Name
 2. Number of views
