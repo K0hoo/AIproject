@@ -1,4 +1,5 @@
 /vsocde
-*.ipynb
+__pycache__
 
+*.ipynb
 w_*.pkl
