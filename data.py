@@ -29,9 +29,6 @@ class menu:
         self.ingredient = doc['ingredient']
         self.weight = doc['weight']
         self.recipe = doc['recipe']
-
-    def getWeight(self):
-        return self.cur_weight
     
     def getName(self):
         return self.name
