@@ -10,21 +10,72 @@ from sklearn.preprocessing import normalize
 from data import menu
 
 
-def get_ingredient_similarity(menus:np.array, s_idx:int):
+def write_csv_file(path:str, data:np.array):
+    
+    if not os.path.exists(path):
+        csv_file = open(path, 'w', encoding='utf8', newline='')
+        writer = csv.writer(csv_file)
+        writer.writerows(data)
+        csv_file.close()
+        return True
+    return False
 
-    sparse_matrix = create_sparse_matrix()
 
-    similarity = np.empty(len(menus), dtype=float)
+def get_ingredient_similarity(s_idx:int, n_components:int=40, write_csv:bool=False):
+
+    if os.path.exists(f'data_binary/similarity/ingredient/{s_idx:04d}_{n_components:2d}.pkl'):
+        similarity_pkl = open(f'data_binary/similarity/ingredient/{s_idx:04d}_{n_components:2d}.pkl', 'rb')
+        similarity = pickle.load(similarity_pkl)
+        if write_csv: 
+            write_csv_file(f'data_csv/similarity/ingredient/{s_idx:04d}_{n_components:2d}.csv', np.expand_dims(similarity, axis=1))
+        return similarity
+
+    sparse_matrix = create_sparse_matrix(write_csv=write_csv)
+
+    if os.path.exists(f'data_binary/matrix/nmf_{n_components}.pkl'):
+        matrix_pkl = open(f'data_binary/matrix/nmf_{n_components}.pkl', 'rb')
+        embedding_matrix = pickle.load(matrix_pkl)
+        matrix_pkl.close()
+    else:
+        nmf = NMF(n_components, init='random', random_state=0, max_iter=1000, tol=1e-8, verbose=True)
+        embedding_matrix = nmf.fit_transform(sparse_matrix)
+        embedding_matrix = normalize(embedding_matrix)
+        matrix_pkl = open(f'data_binary/matrix/nmf_{n_components}.pkl', 'wb')
+        pickle.dump(embedding_matrix, matrix_pkl, pickle.HIGHEST_PROTOCOL)
+        matrix_pkl.close()
+
+    if write_csv:
+        write_csv_file(f'data_csv/matrix/nmf_{n_components}.csv', embedding_matrix)
+
+    s_weight = embedding_matrix[s_idx]
+    similarity = np.empty(len(sparse_matrix), dtype=float)
+
+    for i, weight in enumerate(embedding_matrix):
+        similarity[i] = np.sum(s_weight * weight)
+
+    similarity_pkl = open(f'data_binary/similarity/ingredient/{s_idx:04d}_{n_components:2d}.pkl', 'wb')
+    pickle.dump(similarity, similarity_pkl, pickle.HIGHEST_PROTOCOL)
+    similarity_pkl.close()
+
+    if write_csv: 
+        write_csv_file(f'data_csv/similarity/ingredient/{s_idx:04d}_{n_components:2d}.csv', np.expand_dims(similarity, axis=1))
+    
     return similarity
 
 
 def get_menu_similarity(menus:np.array, s_idx:int):
     similarity = np.empty(len(menus), dtype=float)
+
+    # TODO !!!
+
     return similarity
 
 
 def get_recipe_similarity(menus:np.array, s_idx:int):
     similarity = np.empty(len(menus), dtype=float)
+
+    # TODO !!!
+
     return similarity
 
 
@@ -50,14 +101,11 @@ def create_sparse_matrix(write_csv:bool=False):
     pickle.dump(sparse_matrix, sparse_matrix_pickle, pickle.HIGHEST_PROTOCOL)
     sparse_matrix_pickle.close()
 
-    if write_csv:
-        sparse_matrix_file = open('data_csv/matrix.csv', 'w', encoding='utf8', newline='')
-        writer = csv.writer(sparse_matrix_file)
-        writer.writerows(sparse_matrix)
-        sparse_matrix_file.close()
+    if write_csv: write_csv_file('data_csv/matrix.csv', sparse_matrix)
 
     return sparse_matrix
 
 
 if __name__=="__main__":
-    create_sparse_matrix(write_csv=True)    
+    
+    get_ingredient_similarity(0, write_csv=True)
