@@ -1,6 +1,7 @@
 import numpy as np
 
 import os
+import sys
 import csv
 import pickle
 
@@ -12,6 +13,9 @@ from data import menu
 
 def write_csv_file(path:str, data:np.array):
     
+    if len(data.shape) != 2:
+        print(f'Dimension of data should be 2 to write in CSV file.', file=sys.stderr)
+
     if not os.path.exists(path):
         csv_file = open(path, 'w', encoding='utf8', newline='')
         writer = csv.writer(csv_file)
