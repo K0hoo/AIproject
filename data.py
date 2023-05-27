@@ -114,3 +114,4 @@ if __name__ == "__main__":
 
     menus, ingds = create_menus()
     weights = get_current_weights(menus)
+    print(menus.shape)
