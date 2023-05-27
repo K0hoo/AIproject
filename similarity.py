@@ -4,6 +4,7 @@ import os
 import sys
 import csv
 import pickle
+import pandas as pd
 
 from sklearn.decomposition import NMF
 from sklearn.preprocessing import normalize
@@ -75,10 +76,15 @@ def get_menu_similarity(menus:np.array, s_idx:int):
     return similarity
 
 
-def get_recipe_similarity(menus:np.array, s_idx:int):
+def get_recipe_similarity(s_idx:int):
+    df = pd.read_csv('data_csv/recipe_data.csv')
+    menus = np.array(df['name'])
     similarity = np.empty(len(menus), dtype=float)
 
     # TODO !!!
+    with open(f"data_binary/recipe_similarity_matrix.pickle","rb") as fi:
+        similarity_matrix = pickle.load(fi)
+    similarity = similarity_matrix[s_idx]
 
     return similarity
 
@@ -113,3 +119,4 @@ def create_sparse_matrix(write_csv:bool=False):
 if __name__=="__main__":
     
     get_ingredient_similarity(0, write_csv=True)
+    get_recipe_similarity(0)
