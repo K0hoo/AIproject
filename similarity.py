@@ -67,10 +67,14 @@ def get_ingredient_similarity(s_idx:int, n_components:int=40, write_csv:bool=Fal
     return similarity
 
 
-def get_menu_similarity(menus:np.array, s_idx:int):
+def get_menu_similarity(s_idx:int):
+    menus = pickle.load(open('data_binary/menu.pkl', 'rb'))
     similarity = np.empty(len(menus), dtype=float)
 
     # TODO !!!
+    with open(f"data_binary/menu_similarity_matrix.pickle","rb") as fi:
+        similarity_matrix = pickle.load(fi)
+    similarity = similarity_matrix[s_idx]
 
     return similarity
 
@@ -116,5 +120,6 @@ def create_sparse_matrix(write_csv:bool=False):
 
 if __name__=="__main__":
     
-    get_ingredient_similarity(0, write_csv=True)
-    get_recipe_similarity(0)
+    print(get_ingredient_similarity(0, write_csv=True))
+    print(get_recipe_similarity(0))
+    print(get_menu_similarity(0))
