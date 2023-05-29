@@ -19,7 +19,7 @@ user_preference_menus = [[1, 1]]
 def get_FOOD_POOL_sort_index(food_pool: int=100) -> np.array:
     menus, _ = data.create_menus()
     menus_weights = data.get_current_weights(menus, state=user_status)
-    return menus_weights.argsort()[::-1][:food_pool], menus_weights
+    return menus_weights.argsort()[::-1][:food_pool], menus_weights/menus_weights.max()
 
 # get food similarity list about user preference
 def get_similarity_by_user_preference(similarity_function=None) -> np.array:
@@ -52,7 +52,6 @@ def get_name_array() -> np.array:
 
 if __name__=="__main__":
     menus_FOOD_POOL_sort_index, menus_FOOD_POOL_weight = get_FOOD_POOL_sort_index(FOOD_POOL)
-
     # ensemble models
     # m0 : have ingredient weight
     m0 = menus_FOOD_POOL_weight
