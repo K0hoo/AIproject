@@ -78,7 +78,6 @@ def get_menu_similarity(s_idx:int):
 
     return similarity
 
-
 def get_recipe_similarity(s_idx:int):
     menus = pickle.load(open('data_binary/menu.pkl', 'rb'))
     similarity = np.empty(len(menus), dtype=float)
@@ -90,6 +89,11 @@ def get_recipe_similarity(s_idx:int):
 
     return similarity
 
+def get_view(s_idx:int=0):
+    with open(f"data_binary/menu_view.pickle","rb") as fi:
+        data = pickle.load(fi)
+        data = normalize(data.reshape(1, -1))
+        return np.array(data[0], dtype=float)
 
 def create_sparse_matrix(write_csv:bool=False):
 
