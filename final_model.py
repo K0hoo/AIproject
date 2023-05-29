@@ -5,7 +5,7 @@ import os
 import csv
 
 FOOD_POOL = 100
-COEFF = [1,1,1,1,1]
+COEFF = [1,1,1,1,0.1]
 
 ############ get information from user ############
 user_status = {
